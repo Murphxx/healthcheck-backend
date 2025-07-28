@@ -19,4 +19,10 @@ public class StatusController {
     public Collection<HealthResponse> getAllStatuses() {
         return healthCheckService.getAllStatuses().values();
     }
+
+    @GetMapping("/check")
+    public String checkAllModules() {
+        healthCheckService.checkAllModules();
+        return "All modules checked successfully";
+    }
 }

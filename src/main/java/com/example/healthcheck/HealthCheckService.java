@@ -32,9 +32,12 @@ public class HealthCheckService {
 
     @Scheduled(fixedRate = 30000) // 30 saniyede bir
     public void checkAllModules() {
+        System.out.println("=== Starting scheduled health check ===");
         for (ModuleHealth module : ModuleHealth.values()) {
+            System.out.println("Checking module: " + module.getDisplayName());
             checkModule(module);
         }
+        System.out.println("=== Health check completed ===");
     }
 
     public void checkModule(ModuleHealth module) {
@@ -139,13 +142,13 @@ public class HealthCheckService {
                 }
             } else {
                 // Diğer modüller için normal işlem
-                ResponseEntity<HealthResponse> response;
-                if ("POST".equalsIgnoreCase(module.getHttpMethod())) {
-                    response = restTemplate.postForEntity(module.getHealthEndpoint(), null, HealthResponse.class);
-                } else {
-                    response = restTemplate.getForEntity(module.getHealthEndpoint(), HealthResponse.class);
-                }
-                statusMap.put(module, response.getBody());
+            ResponseEntity<HealthResponse> response;
+            if ("POST".equalsIgnoreCase(module.getHttpMethod())) {
+                response = restTemplate.postForEntity(module.getHealthEndpoint(), null, HealthResponse.class);
+            } else {
+                response = restTemplate.getForEntity(module.getHealthEndpoint(), HealthResponse.class);
+            }
+            statusMap.put(module, response.getBody());
             }
         } catch (Exception e) {
             // Ulaşılamıyorsa boş HealthResponse ile işaretle
