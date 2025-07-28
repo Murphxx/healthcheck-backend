@@ -4,6 +4,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import jakarta.annotation.PostConstruct;
 import java.util.EnumMap;
@@ -21,6 +22,12 @@ public class HealthCheckService {
             request.getHeaders().add("User-Agent", "HealthCheck-Bot/1.0");
             return execution.execute(request, body);
         });
+        
+        // Timeout ayarları
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(10000); // 10 saniye
+        factory.setReadTimeout(30000); // 30 saniye
+        this.restTemplate.setRequestFactory(factory);
     }
 
     @PostConstruct
@@ -142,15 +149,17 @@ public class HealthCheckService {
                 } else {
                     throw new Exception("AOM service not available");
                 }
-            } else {
+                        } else {
                 // Diğer modüller için normal işlem
-            ResponseEntity<HealthResponse> response;
-            if ("POST".equalsIgnoreCase(module.getHttpMethod())) {
-                response = restTemplate.postForEntity(module.getHealthEndpoint(), null, HealthResponse.class);
-            } else {
-                response = restTemplate.getForEntity(module.getHealthEndpoint(), HealthResponse.class);
-            }
-            statusMap.put(module, response.getBody());
+                System.out.println("Checking module: " + module.getDisplayName() + " at " + module.getHealthEndpoint());
+                ResponseEntity<HealthResponse> response;
+                if ("POST".equalsIgnoreCase(module.getHttpMethod())) {
+                    response = restTemplate.postForEntity(module.getHealthEndpoint(), null, HealthResponse.class);
+                } else {
+                    response = restTemplate.getForEntity(module.getHealthEndpoint(), HealthResponse.class);
+                }
+                System.out.println("Response for " + module.getDisplayName() + ": " + response.getStatusCode());
+                statusMap.put(module, response.getBody());
             }
         } catch (Exception e) {
             // Ulaşılamıyorsa boş HealthResponse ile işaretle

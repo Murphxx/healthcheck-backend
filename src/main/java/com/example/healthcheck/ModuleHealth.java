@@ -4,7 +4,7 @@ public enum ModuleHealth {
     CHF("Charging Function", "http://35.241.210.255:8080/chf/health", "GET"),
     TGF("Traffic Generator", "http://34.44.173.88:5000/TGF/health", "GET"),
     CGF("Charging GW Function", "http://34.51.185.11:8080/CGF/health", "GET"),
-    ABMF("ABMF", "http://35.242.142.244:8080/ABMF/health", "GET"),
+    // ABMF("ABMF", "http://35.242.142.244:8080/ABMF/health", "GET"), // Temporarily disabled
     KAFKA("Kafka", "http://34.38.128.100:9010/kafka/health", "GET"),
     NOTIFICATION_SERVICE("Notification Service", "http://35.198.190.231:3000/api/NS/health", "GET"),
     SMS_APP("PRS ", "http://34.59.178.11:8080/health", "GET"),
