@@ -50,8 +50,8 @@ public class HealthCheckService {
                 System.out.println("Web Service Response Status: " + response.getStatusCode());
                 System.out.println("Web Service Response Body: " + body);
                 
-                // HTTP 200 OK ise ve herhangi bir içerik varsa çalışıyor kabul et
-                if (response.getStatusCode().is2xxSuccessful() && body != null && !body.trim().isEmpty()) {
+                // HTTP 200 OK ise çalışıyor kabul et (HTML döndürse bile)
+                if (response.getStatusCode().is2xxSuccessful()) {
                     HealthResponse up = new HealthResponse();
                     up.setStatus(200);
                     up.setService(module.getDisplayName());
@@ -73,6 +73,8 @@ public class HealthCheckService {
                 System.out.println("Checking AOM Service: " + module.getHealthEndpoint());
                 ResponseEntity<AOMResponse> response = restTemplate.getForEntity(module.getHealthEndpoint(), AOMResponse.class);
                 AOMResponse aomResponse = response.getBody();
+                System.out.println("AOM Response Status: " + response.getStatusCode());
+                System.out.println("AOM Response Body: " + aomResponse);
                 
                 if (aomResponse != null && aomResponse.getStatus() == 200) {
                     HealthResponse healthResponse = new HealthResponse();
